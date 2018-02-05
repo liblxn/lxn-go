@@ -4,7 +4,7 @@ import (
 	"io"
 	"math"
 
-	msgpack "github.com/tsne/msgpack-go"
+	msgpack "github.com/mprot/msgpack-go"
 
 	"github.com/liblxn/lxn-go/internal"
 )
