@@ -7,5 +7,6 @@ type Variable interface {
 	String() string
 }
 
-// Context holds all the variables which are passed to the replacements.
+// Context holds all the variables which are passed to the message's
+// replacements.
 type Context map[string]Variable // key => replacement variable
