@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"unicode/utf8"
 
-	"github.com/liblxn/lxn-go/internal"
+	schema "github.com/liblxn/lxn/schema/golang"
 )
 
 const (
@@ -24,7 +24,7 @@ func (w *writer) WriteRunes(runes []rune) {
 	}
 }
 
-func (w *writer) WriteAffix(affix string, symb *internal.Symbols, currency string) {
+func (w *writer) WriteAffix(affix string, symb *schema.Symbols, currency string) {
 	for affix != "" {
 		ch, n := utf8.DecodeRuneInString(affix)
 		switch ch {
@@ -41,7 +41,7 @@ func (w *writer) WriteAffix(affix string, symb *internal.Symbols, currency strin
 	}
 }
 
-func (w *writer) WriteInt(digits []rune, nf *internal.NumberFormat) {
+func (w *writer) WriteInt(digits []rune, nf *schema.NumberFormat) {
 	if nf.PrimaryIntegerGrouping > 0 {
 		// secondary groups
 		lead := (len(digits) - nf.PrimaryIntegerGrouping) % nf.SecondaryIntegerGrouping
@@ -62,7 +62,7 @@ func (w *writer) WriteInt(digits []rune, nf *internal.NumberFormat) {
 	w.WriteRunes(digits)
 }
 
-func (w *writer) WriteFrac(digits []rune, nf *internal.NumberFormat) {
+func (w *writer) WriteFrac(digits []rune, nf *schema.NumberFormat) {
 	if len(digits) == 0 {
 		return
 	}
@@ -86,7 +86,7 @@ func (w *writer) InvalidType(key string) {
 	w.WriteString("%!(INVALID:" + key + ")")
 }
 
-func (w *writer) UnsupportedReplType(typ internal.ReplacementType) {
+func (w *writer) UnsupportedReplType(typ schema.ReplacementType) {
 	t := strconv.FormatInt(int64(typ), 10)
 	w.WriteString("%!(UNSUPPORTED:ReplType-" + t + ")")
 }

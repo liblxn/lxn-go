@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/liblxn/lxn-go/internal"
+	schema "github.com/liblxn/lxn/schema/golang"
 )
 
 func TestWriterWriteRunes(t *testing.T) {
@@ -22,7 +22,7 @@ func TestWriterWriteRunes(t *testing.T) {
 func TestWriterWriteAffix(t *testing.T) {
 	tests := []struct {
 		affix    string
-		symbols  internal.Symbols
+		symbols  schema.Symbols
 		currency string
 		expected string
 	}{
@@ -37,17 +37,17 @@ func TestWriterWriteAffix(t *testing.T) {
 		},
 		{
 			affix:    "foo_" + string(minusPlaceholder) + "_bar",
-			symbols:  internal.Symbols{Minus: "minus"},
+			symbols:  schema.Symbols{Minus: "minus"},
 			expected: "foo_minus_bar",
 		},
 		{
 			affix:    "foo_" + string(percentPlaceholder) + "_bar",
-			symbols:  internal.Symbols{Percent: "percent"},
+			symbols:  schema.Symbols{Percent: "percent"},
 			expected: "foo_percent_bar",
 		},
 		{
 			affix: string(currencyPlaceholder) + "_foo_" + string(minusPlaceholder) + "_bar_" + string(percentPlaceholder),
-			symbols: internal.Symbols{
+			symbols: schema.Symbols{
 				Minus:   "minus",
 				Percent: "percent",
 			},
@@ -68,20 +68,20 @@ func TestWriterWriteAffix(t *testing.T) {
 func TestWriterWriteInt(t *testing.T) {
 	tests := []struct {
 		digits   []rune
-		nf       internal.NumberFormat
+		nf       schema.NumberFormat
 		expected string
 	}{
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: internal.NumberFormat{
-				Symbols: internal.Symbols{Group: "#"},
+			nf: schema.NumberFormat{
+				Symbols: schema.Symbols{Group: "#"},
 			},
 			expected: "123",
 		},
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: internal.NumberFormat{
-				Symbols:                  internal.Symbols{Group: "#"},
+			nf: schema.NumberFormat{
+				Symbols:                  schema.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   2,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -89,8 +89,8 @@ func TestWriterWriteInt(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4'},
-			nf: internal.NumberFormat{
-				Symbols:                  internal.Symbols{Group: "#"},
+			nf: schema.NumberFormat{
+				Symbols:                  schema.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   2,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -98,8 +98,8 @@ func TestWriterWriteInt(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4', '5', '6'},
-			nf: internal.NumberFormat{
-				Symbols:                  internal.Symbols{Group: "#"},
+			nf: schema.NumberFormat{
+				Symbols:                  schema.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   3,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -107,8 +107,8 @@ func TestWriterWriteInt(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4', '5', '6', '7'},
-			nf: internal.NumberFormat{
-				Symbols:                  internal.Symbols{Group: "#"},
+			nf: schema.NumberFormat{
+				Symbols:                  schema.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   3,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -128,7 +128,7 @@ func TestWriterWriteInt(t *testing.T) {
 func TestWriterWriteFrac(t *testing.T) {
 	tests := []struct {
 		digits   []rune
-		nf       internal.NumberFormat
+		nf       schema.NumberFormat
 		expected string
 	}{
 		{
@@ -137,8 +137,8 @@ func TestWriterWriteFrac(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: internal.NumberFormat{
-				Symbols: internal.Symbols{
+			nf: schema.NumberFormat{
+				Symbols: schema.Symbols{
 					Decimal: "_",
 					Group:   "#",
 				},
@@ -147,8 +147,8 @@ func TestWriterWriteFrac(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: internal.NumberFormat{
-				Symbols: internal.Symbols{
+			nf: schema.NumberFormat{
+				Symbols: schema.Symbols{
 					Decimal: "_",
 					Group:   "#",
 				},
@@ -158,8 +158,8 @@ func TestWriterWriteFrac(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4'},
-			nf: internal.NumberFormat{
-				Symbols: internal.Symbols{
+			nf: schema.NumberFormat{
+				Symbols: schema.Symbols{
 					Decimal: "_",
 					Group:   "#",
 				},
@@ -195,7 +195,7 @@ func TestWriterInvalidType(t *testing.T) {
 }
 
 func TestWriterUnsupportedReplType(t *testing.T) {
-	const typ = internal.SelectReplacement
+	const typ = schema.SelectReplacement
 	typstr := strconv.FormatInt(int64(typ), 10)
 
 	var w writer

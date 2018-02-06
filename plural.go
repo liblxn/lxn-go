@@ -1,7 +1,7 @@
 package lxn
 
 import (
-	"github.com/liblxn/lxn-go/internal"
+	schema "github.com/liblxn/lxn/schema/golang"
 )
 
 type operands struct {
@@ -14,7 +14,7 @@ type operands struct {
 	t int64
 }
 
-func pluralTag(num number, nf *internal.NumberFormat, plurals []internal.Plural) internal.PluralTag {
+func pluralTag(num number, nf *schema.NumberFormat, plurals []schema.Plural) schema.PluralTag {
 	var buf [maxFloatDigits]rune
 
 	intDigits, fracDigits := num.digits(buf[:], nf, 0)
@@ -33,10 +33,10 @@ func pluralTag(num number, nf *internal.NumberFormat, plurals []internal.Plural)
 			if !match {
 				// We found an operand in the conjunction that is false, i.e. our
 				// whole condition evaluates to false. So we skip the conjunction.
-				for i < len(p.Rules) && p.Rules[i].Connective == internal.Conjunction {
+				for i < len(p.Rules) && p.Rules[i].Connective == schema.Conjunction {
 					i++
 				}
-			} else if p.Rules[i].Connective == internal.Disjunction {
+			} else if p.Rules[i].Connective == schema.Disjunction {
 				// We found an operand in the disjunction that is true, i.e. our
 				// whole condition evaluates to true.
 				break
@@ -46,13 +46,13 @@ func pluralTag(num number, nf *internal.NumberFormat, plurals []internal.Plural)
 			return p.Tag
 		}
 	}
-	return internal.Other
+	return schema.Other
 }
 
-func matchRule(op *operands, r *internal.PluralRule, intDigits []rune, fracDigits []rune) bool {
+func matchRule(op *operands, r *schema.PluralRule, intDigits []rune, fracDigits []rune) bool {
 	var x int64
 	switch r.Operand {
-	case internal.AbsoluteValue: // n
+	case schema.AbsoluteValue: // n
 		// Since the ranges contain integer values only, we do not match
 		// if n has non-zero fractional digits.
 		if op.f != 0 {
@@ -60,13 +60,13 @@ func matchRule(op *operands, r *internal.PluralRule, intDigits []rune, fracDigit
 		}
 		fallthrough
 
-	case internal.IntegerDigits: // i
+	case schema.IntegerDigits: // i
 		x = op.i
 
-	case internal.NumFracDigits: // v
+	case schema.NumFracDigits: // v
 		x = op.v
 
-	case internal.NumFracDigitsNoZeros: // w
+	case schema.NumFracDigitsNoZeros: // w
 		if op.w < 0 {
 			op.w = op.v
 			for op.w > 0 && fracDigits[op.w-1] == 0 {
@@ -75,10 +75,10 @@ func matchRule(op *operands, r *internal.PluralRule, intDigits []rune, fracDigit
 		}
 		x = op.w
 
-	case internal.FracDigits: // f
+	case schema.FracDigits: // f
 		x = op.f
 
-	case internal.FracDigitsNoZeros: // t
+	case schema.FracDigitsNoZeros: // t
 		if op.t < 0 {
 			op.t = op.f
 			for op.t > 0 && op.t%10 == 0 {

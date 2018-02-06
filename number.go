@@ -4,12 +4,12 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/liblxn/lxn-go/internal"
+	schema "github.com/liblxn/lxn/schema/golang"
 )
 
 type number interface {
-	digits(buf []rune, nf *internal.NumberFormat, zero rune) ([]rune, []rune) // (integer, fraction)
-	format(w *writer, nf *internal.NumberFormat, currency string)
+	digits(buf []rune, nf *schema.NumberFormat, zero rune) ([]rune, []rune) // (integer, fraction)
+	format(w *writer, nf *schema.NumberFormat, currency string)
 }
 
 const (
@@ -26,14 +26,14 @@ func (i Int) String() string {
 }
 
 // returns (integer digits, fraction digits)
-func (i Int) digits(buf []rune, nf *internal.NumberFormat, zero rune) ([]rune, []rune) {
+func (i Int) digits(buf []rune, nf *schema.NumberFormat, zero rune) ([]rune, []rune) {
 	if i < 0 {
 		i = -i
 	}
 	return Uint(i).digits(buf, nf, zero)
 }
 
-func (i Int) format(w *writer, nf *internal.NumberFormat, currency string) {
+func (i Int) format(w *writer, nf *schema.NumberFormat, currency string) {
 	negative := i < 0
 	if negative {
 		i = -i
@@ -50,7 +50,7 @@ func (ui Uint) String() string {
 }
 
 // returns (integer digits, fraction digits)
-func (ui Uint) digits(buf []rune, nf *internal.NumberFormat, zero rune) ([]rune, []rune) {
+func (ui Uint) digits(buf []rune, nf *schema.NumberFormat, zero rune) ([]rune, []rune) {
 	// fractional digits
 	fracidx := len(buf)
 	for i := 0; i < nf.MinFractionDigits; i++ {
@@ -77,11 +77,11 @@ func (ui Uint) digits(buf []rune, nf *internal.NumberFormat, zero rune) ([]rune,
 	return buf[intidx:fracidx], buf[fracidx:]
 }
 
-func (ui Uint) format(w *writer, nf *internal.NumberFormat, currency string) {
+func (ui Uint) format(w *writer, nf *schema.NumberFormat, currency string) {
 	ui.fmt(w, nf, currency, false)
 }
 
-func (ui Uint) fmt(w *writer, nf *internal.NumberFormat, currency string, negative bool) {
+func (ui Uint) fmt(w *writer, nf *schema.NumberFormat, currency string, negative bool) {
 	prefix, suffix := nf.PositivePrefix, nf.PositiveSuffix
 	if negative {
 		prefix, suffix = nf.NegativePrefix, nf.NegativeSuffix
@@ -105,7 +105,7 @@ func (f Float) String() string {
 }
 
 // returns (integer digits, fraction digits)
-func (f Float) digits(buf []rune, nf *internal.NumberFormat, zero rune) ([]rune, []rune) {
+func (f Float) digits(buf []rune, nf *schema.NumberFormat, zero rune) ([]rune, []rune) {
 	if f < 0 {
 		f = -f
 	}
@@ -148,7 +148,7 @@ func (f Float) digits(buf []rune, nf *internal.NumberFormat, zero rune) ([]rune,
 	return buf[intidx:fracidx], buf[fracidx:]
 }
 
-func (f Float) format(w *writer, nf *internal.NumberFormat, currency string) {
+func (f Float) format(w *writer, nf *schema.NumberFormat, currency string) {
 	switch {
 	case math.IsNaN(float64(f)):
 		w.WriteString(nf.Symbols.Nan)

@@ -3,25 +3,25 @@ package lxn
 import (
 	"testing"
 
-	"github.com/liblxn/lxn-go/internal"
+	schema "github.com/liblxn/lxn/schema/golang"
 )
 
 func TestFormatMsg(t *testing.T) {
 	tests := []struct {
-		msg      internal.Message
+		msg      schema.Message
 		ctx      Context
-		loc      internal.Locale
+		loc      schema.Locale
 		expected string
 	}{
 		// no replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foobar"},
 			},
 			expected: "foobar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo", "bar"},
 			},
 			expected: "foobar",
@@ -29,13 +29,13 @@ func TestFormatMsg(t *testing.T) {
 
 		// string replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -47,19 +47,19 @@ func TestFormatMsg(t *testing.T) {
 
 		// number replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.NumberReplacement,
+						Type:    schema.NumberReplacement,
 					},
 				},
 			},
-			loc: internal.Locale{
-				DecimalFormat: internal.NumberFormat{
-					Symbols: internal.Symbols{Zero: '0'},
+			loc: schema.Locale{
+				DecimalFormat: schema.NumberFormat{
+					Symbols: schema.Symbols{Zero: '0'},
 				},
 			},
 			ctx: Context{
@@ -70,19 +70,19 @@ func TestFormatMsg(t *testing.T) {
 
 		// percent replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PercentReplacement,
+						Type:    schema.PercentReplacement,
 					},
 				},
 			},
-			loc: internal.Locale{
-				PercentFormat: internal.NumberFormat{
-					Symbols:        internal.Symbols{Zero: '0', Percent: "%"},
+			loc: schema.Locale{
+				PercentFormat: schema.NumberFormat{
+					Symbols:        schema.Symbols{Zero: '0', Percent: "%"},
 					PositiveSuffix: "%",
 				},
 			},
@@ -94,22 +94,22 @@ func TestFormatMsg(t *testing.T) {
 
 		// money replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.MoneyReplacement,
-						Details: internal.ReplacementDetails{
-							internal.MoneyDetails{Currency: "currkey"},
+						Type:    schema.MoneyReplacement,
+						Details: schema.ReplacementDetails{
+							schema.MoneyDetails{Currency: "currkey"},
 						},
 					},
 				},
 			},
-			loc: internal.Locale{
-				MoneyFormat: internal.NumberFormat{
-					Symbols:        internal.Symbols{Zero: '0'},
+			loc: schema.Locale{
+				MoneyFormat: schema.NumberFormat{
+					Symbols:        schema.Symbols{Zero: '0'},
 					PositiveSuffix: string(currencyPlaceholder),
 				},
 			},
@@ -122,18 +122,18 @@ func TestFormatMsg(t *testing.T) {
 
 		// plural replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PluralReplacement,
-						Details: internal.ReplacementDetails{
-							internal.PluralDetails{
-								Type: internal.Cardinal,
-								Variants: map[internal.PluralTag]internal.Message{
-									internal.Other: {
+						Type:    schema.PluralReplacement,
+						Details: schema.ReplacementDetails{
+							schema.PluralDetails{
+								Type: schema.Cardinal,
+								Variants: map[schema.PluralTag]schema.Message{
+									schema.Other: {
 										Text: []string{"plural"},
 									},
 								},
@@ -148,18 +148,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PluralReplacement,
-						Details: internal.ReplacementDetails{
-							internal.PluralDetails{
-								Type: internal.Cardinal,
-								Variants: map[internal.PluralTag]internal.Message{
-									internal.Few: {
+						Type:    schema.PluralReplacement,
+						Details: schema.ReplacementDetails{
+							schema.PluralDetails{
+								Type: schema.Cardinal,
+								Variants: map[schema.PluralTag]schema.Message{
+									schema.Few: {
 										Text: []string{"plural"},
 									},
 								},
@@ -168,14 +168,14 @@ func TestFormatMsg(t *testing.T) {
 					},
 				},
 			},
-			loc: internal.Locale{
-				CardinalPlurals: []internal.Plural{
+			loc: schema.Locale{
+				CardinalPlurals: []schema.Plural{
 					{
-						Tag: internal.Few,
-						Rules: []internal.PluralRule{
+						Tag: schema.Few,
+						Rules: []schema.PluralRule{
 							{
-								Operand: internal.AbsoluteValue,
-								Ranges:  []internal.Range{{LowerBound: 7, UpperBound: 7}},
+								Operand: schema.AbsoluteValue,
+								Ranges:  []schema.Range{{LowerBound: 7, UpperBound: 7}},
 							},
 						},
 					},
@@ -187,18 +187,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PluralReplacement,
-						Details: internal.ReplacementDetails{
-							internal.PluralDetails{
-								Type: internal.Ordinal,
-								Variants: map[internal.PluralTag]internal.Message{
-									internal.Few: {
+						Type:    schema.PluralReplacement,
+						Details: schema.ReplacementDetails{
+							schema.PluralDetails{
+								Type: schema.Ordinal,
+								Variants: map[schema.PluralTag]schema.Message{
+									schema.Few: {
 										Text: []string{"plural"},
 									},
 								},
@@ -207,14 +207,14 @@ func TestFormatMsg(t *testing.T) {
 					},
 				},
 			},
-			loc: internal.Locale{
-				OrdinalPlurals: []internal.Plural{
+			loc: schema.Locale{
+				OrdinalPlurals: []schema.Plural{
 					{
-						Tag: internal.Few,
-						Rules: []internal.PluralRule{
+						Tag: schema.Few,
+						Rules: []schema.PluralRule{
 							{
-								Operand: internal.AbsoluteValue,
-								Ranges:  []internal.Range{{LowerBound: 7, UpperBound: 7}},
+								Operand: schema.AbsoluteValue,
+								Ranges:  []schema.Range{{LowerBound: 7, UpperBound: 7}},
 							},
 						},
 					},
@@ -226,18 +226,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PluralReplacement,
-						Details: internal.ReplacementDetails{
-							internal.PluralDetails{
-								Type: internal.Ordinal,
-								Variants: map[internal.PluralTag]internal.Message{
-									internal.Other: {
+						Type:    schema.PluralReplacement,
+						Details: schema.ReplacementDetails{
+							schema.PluralDetails{
+								Type: schema.Ordinal,
+								Variants: map[schema.PluralTag]schema.Message{
+									schema.Other: {
 										Text: []string{"plural"},
 									},
 								},
@@ -246,14 +246,14 @@ func TestFormatMsg(t *testing.T) {
 					},
 				},
 			},
-			loc: internal.Locale{
-				OrdinalPlurals: []internal.Plural{
+			loc: schema.Locale{
+				OrdinalPlurals: []schema.Plural{
 					{
-						Tag: internal.Few,
-						Rules: []internal.PluralRule{
+						Tag: schema.Few,
+						Rules: []schema.PluralRule{
 							{
-								Operand: internal.AbsoluteValue,
-								Ranges:  []internal.Range{{LowerBound: 7, UpperBound: 7}},
+								Operand: schema.AbsoluteValue,
+								Ranges:  []schema.Range{{LowerBound: 7, UpperBound: 7}},
 							},
 						},
 					},
@@ -265,17 +265,17 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PluralReplacement,
-						Details: internal.ReplacementDetails{
-							internal.PluralDetails{
-								Type: internal.Ordinal,
-								Custom: map[int64]internal.Message{
+						Type:    schema.PluralReplacement,
+						Details: schema.ReplacementDetails{
+							schema.PluralDetails{
+								Type: schema.Ordinal,
+								Custom: map[int64]schema.Message{
 									7: {
 										Text: []string{"plural"},
 									},
@@ -293,16 +293,16 @@ func TestFormatMsg(t *testing.T) {
 
 		// select replacement
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.SelectReplacement,
-						Details: internal.ReplacementDetails{
-							internal.SelectDetails{
-								Cases: map[string]internal.Message{
+						Type:    schema.SelectReplacement,
+						Details: schema.ReplacementDetails{
+							schema.SelectDetails{
+								Cases: map[string]schema.Message{
 									"abc": {
 										Text: []string{"select"},
 									},
@@ -318,16 +318,16 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo select bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.SelectReplacement,
-						Details: internal.ReplacementDetails{
-							internal.SelectDetails{
-								Cases: map[string]internal.Message{
+						Type:    schema.SelectReplacement,
+						Details: schema.ReplacementDetails{
+							schema.SelectDetails{
+								Cases: map[string]schema.Message{
 									"abc": {
 										Text: []string{"select"},
 									},
@@ -346,13 +346,13 @@ func TestFormatMsg(t *testing.T) {
 
 		// replacement positioning
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 0,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -362,13 +362,13 @@ func TestFormatMsg(t *testing.T) {
 			expected: "abcfoo  bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 2,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -378,18 +378,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo  barabc",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 0,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 0,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -400,18 +400,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "abcdeffoo  bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 1,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 1,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -422,18 +422,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo abcdef bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 2,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 2,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -444,18 +444,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo  barabcdef",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 0,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 2,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -478,20 +478,20 @@ func TestFormatMsg(t *testing.T) {
 
 func TestFormatMsgWithIncompleteInput(t *testing.T) {
 	tests := []struct {
-		msg      internal.Message
+		msg      schema.Message
 		ctx      Context
-		loc      internal.Locale
+		loc      schema.Locale
 		expected string
 	}{
 		// missing variable
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.StringReplacement,
+						Type:    schema.StringReplacement,
 					},
 				},
 			},
@@ -500,15 +500,15 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// missing currency variable
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.MoneyReplacement,
-						Details: internal.ReplacementDetails{
-							internal.MoneyDetails{Currency: "currkey"},
+						Type:    schema.MoneyReplacement,
+						Details: schema.ReplacementDetails{
+							schema.MoneyDetails{Currency: "currkey"},
 						},
 					},
 				},
@@ -521,13 +521,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// unsupported replacement type
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.ReplacementType(99),
+						Type:    schema.ReplacementType(99),
 					},
 				},
 			},
@@ -539,13 +539,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// invalid number type
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.NumberReplacement,
+						Type:    schema.NumberReplacement,
 					},
 				},
 			},
@@ -557,13 +557,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// corrupted details
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.MoneyReplacement,
+						Type:    schema.MoneyReplacement,
 					},
 				},
 			},
@@ -573,13 +573,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 			expected: "foo %!(CORRUPTED:replkey) bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.PluralReplacement,
+						Type:    schema.PluralReplacement,
 					},
 				},
 			},
@@ -589,13 +589,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 			expected: "foo %!(CORRUPTED:replkey) bar",
 		},
 		{
-			msg: internal.Message{
+			msg: schema.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []internal.Replacement{
+				Replacements: []schema.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    internal.SelectReplacement,
+						Type:    schema.SelectReplacement,
 					},
 				},
 			},
