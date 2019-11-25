@@ -3,6 +3,7 @@ package lxn
 import (
 	"io"
 	"math"
+	"os"
 
 	schema "github.com/liblxn/lxn/schema/golang"
 	msgpack "github.com/mprot/msgpack-go"
@@ -41,6 +42,16 @@ func ReadCatalog(r io.Reader) (Translator, error) {
 		formatMsg(&w, &m, ctx, &cat.Locale)
 		return w.String()
 	}, nil
+}
+
+func ReadCatalogFile(filename string) (Translator, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	return ReadCatalog(f)
 }
 
 func formatMsg(w *writer, m *schema.Message, ctx Context, loc *schema.Locale) {

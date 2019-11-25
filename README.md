@@ -39,13 +39,7 @@ func main() {
 }
 
 func translator(lang string) lxn.Translator {
-    f, err := os.Open(fmt.Sprintf("catalog-%s.lxnc", lang))
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer f.Close()
-
-    tr, err := lxn.ReadCatalog(f)
+    tr, err := lxn.ReadCatalogFile(fmt.Sprintf("catalog-%s.lxnc", lang))
     if err != nil {
         log.Fatal(err)
     }
