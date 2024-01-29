@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	schema "github.com/liblxn/lxn/schema/golang"
+	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
 func TestWriterWriteRunes(t *testing.T) {
@@ -22,7 +22,7 @@ func TestWriterWriteRunes(t *testing.T) {
 func TestWriterWriteAffix(t *testing.T) {
 	tests := []struct {
 		affix    string
-		symbols  schema.Symbols
+		symbols  lxn.Symbols
 		currency string
 		expected string
 	}{
@@ -37,17 +37,17 @@ func TestWriterWriteAffix(t *testing.T) {
 		},
 		{
 			affix:    "foo_" + string(minusPlaceholder) + "_bar",
-			symbols:  schema.Symbols{Minus: "minus"},
+			symbols:  lxn.Symbols{Minus: "minus"},
 			expected: "foo_minus_bar",
 		},
 		{
 			affix:    "foo_" + string(percentPlaceholder) + "_bar",
-			symbols:  schema.Symbols{Percent: "percent"},
+			symbols:  lxn.Symbols{Percent: "percent"},
 			expected: "foo_percent_bar",
 		},
 		{
 			affix: string(currencyPlaceholder) + "_foo_" + string(minusPlaceholder) + "_bar_" + string(percentPlaceholder),
-			symbols: schema.Symbols{
+			symbols: lxn.Symbols{
 				Minus:   "minus",
 				Percent: "percent",
 			},
@@ -68,20 +68,20 @@ func TestWriterWriteAffix(t *testing.T) {
 func TestWriterWriteInt(t *testing.T) {
 	tests := []struct {
 		digits   []rune
-		nf       schema.NumberFormat
+		nf       lxn.NumberFormat
 		expected string
 	}{
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{Group: "#"},
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{Group: "#"},
 			},
 			expected: "123",
 		},
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: schema.NumberFormat{
-				Symbols:                  schema.Symbols{Group: "#"},
+			nf: lxn.NumberFormat{
+				Symbols:                  lxn.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   2,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -89,8 +89,8 @@ func TestWriterWriteInt(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4'},
-			nf: schema.NumberFormat{
-				Symbols:                  schema.Symbols{Group: "#"},
+			nf: lxn.NumberFormat{
+				Symbols:                  lxn.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   2,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -98,8 +98,8 @@ func TestWriterWriteInt(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4', '5', '6'},
-			nf: schema.NumberFormat{
-				Symbols:                  schema.Symbols{Group: "#"},
+			nf: lxn.NumberFormat{
+				Symbols:                  lxn.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   3,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -107,8 +107,8 @@ func TestWriterWriteInt(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4', '5', '6', '7'},
-			nf: schema.NumberFormat{
-				Symbols:                  schema.Symbols{Group: "#"},
+			nf: lxn.NumberFormat{
+				Symbols:                  lxn.Symbols{Group: "#"},
 				PrimaryIntegerGrouping:   3,
 				SecondaryIntegerGrouping: 2,
 			},
@@ -128,7 +128,7 @@ func TestWriterWriteInt(t *testing.T) {
 func TestWriterWriteFrac(t *testing.T) {
 	tests := []struct {
 		digits   []rune
-		nf       schema.NumberFormat
+		nf       lxn.NumberFormat
 		expected string
 	}{
 		{
@@ -137,8 +137,8 @@ func TestWriterWriteFrac(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Decimal: "_",
 					Group:   "#",
 				},
@@ -147,8 +147,8 @@ func TestWriterWriteFrac(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3'},
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Decimal: "_",
 					Group:   "#",
 				},
@@ -158,8 +158,8 @@ func TestWriterWriteFrac(t *testing.T) {
 		},
 		{
 			digits: []rune{'1', '2', '3', '4'},
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Decimal: "_",
 					Group:   "#",
 				},
@@ -195,7 +195,7 @@ func TestWriterInvalidType(t *testing.T) {
 }
 
 func TestWriterUnsupportedReplType(t *testing.T) {
-	const typ = schema.SelectReplacement
+	const typ = lxn.SelectReplacement
 	typstr := strconv.FormatInt(int64(typ), 10)
 
 	var w writer

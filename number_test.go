@@ -4,13 +4,13 @@ import (
 	"math"
 	"testing"
 
-	schema "github.com/liblxn/lxn/schema/golang"
+	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
 func TestIntDigits(t *testing.T) {
 	tests := []struct {
 		val          Int
-		nf           schema.NumberFormat
+		nf           lxn.NumberFormat
 		expectedInt  string
 		expectedFrac string
 	}{
@@ -26,7 +26,7 @@ func TestIntDigits(t *testing.T) {
 		},
 		{
 			val: -123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinFractionDigits: 2,
 			},
 			expectedInt:  "123",
@@ -34,7 +34,7 @@ func TestIntDigits(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinIntegerDigits: 5,
 			},
 			expectedInt:  "00123",
@@ -42,7 +42,7 @@ func TestIntDigits(t *testing.T) {
 		},
 		{
 			val: -123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinIntegerDigits:  5,
 				MinFractionDigits: 5,
 			},
@@ -66,13 +66,13 @@ func TestIntDigits(t *testing.T) {
 func TestIntFormat(t *testing.T) {
 	tests := []struct {
 		val      Int
-		nf       schema.NumberFormat
+		nf       lxn.NumberFormat
 		expected string
 	}{
 		{
 			val: 0,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -84,8 +84,8 @@ func TestIntFormat(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -98,8 +98,8 @@ func TestIntFormat(t *testing.T) {
 		},
 		{
 			val: -123,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -123,7 +123,7 @@ func TestIntFormat(t *testing.T) {
 func TestUintDigits(t *testing.T) {
 	tests := []struct {
 		val          Uint
-		nf           schema.NumberFormat
+		nf           lxn.NumberFormat
 		expectedInt  string
 		expectedFrac string
 	}{
@@ -139,7 +139,7 @@ func TestUintDigits(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinFractionDigits: 2,
 			},
 			expectedInt:  "123",
@@ -147,7 +147,7 @@ func TestUintDigits(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinIntegerDigits: 5,
 			},
 			expectedInt:  "00123",
@@ -155,7 +155,7 @@ func TestUintDigits(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinIntegerDigits:  5,
 				MinFractionDigits: 5,
 			},
@@ -179,13 +179,13 @@ func TestUintDigits(t *testing.T) {
 func TestUintFormat(t *testing.T) {
 	tests := []struct {
 		val      Uint
-		nf       schema.NumberFormat
+		nf       lxn.NumberFormat
 		expected string
 	}{
 		{
 			val: 0,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -197,8 +197,8 @@ func TestUintFormat(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -223,7 +223,7 @@ func TestUintFormat(t *testing.T) {
 func TestFloatDigits(t *testing.T) {
 	tests := []struct {
 		val          Float
-		nf           schema.NumberFormat
+		nf           lxn.NumberFormat
 		expectedInt  string
 		expectedFrac string
 	}{
@@ -239,7 +239,7 @@ func TestFloatDigits(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinFractionDigits: 2,
 				MaxFractionDigits: 2,
 			},
@@ -248,7 +248,7 @@ func TestFloatDigits(t *testing.T) {
 		},
 		{
 			val: -123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinIntegerDigits: 5,
 			},
 			expectedInt:  "00123",
@@ -256,7 +256,7 @@ func TestFloatDigits(t *testing.T) {
 		},
 		{
 			val: 123,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinIntegerDigits:  5,
 				MinFractionDigits: 3,
 				MaxFractionDigits: 5,
@@ -266,7 +266,7 @@ func TestFloatDigits(t *testing.T) {
 		},
 		{
 			val: -123.12,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinFractionDigits: 1,
 				MaxFractionDigits: 1,
 			},
@@ -275,7 +275,7 @@ func TestFloatDigits(t *testing.T) {
 		},
 		{
 			val: 123.12,
-			nf: schema.NumberFormat{
+			nf: lxn.NumberFormat{
 				MinFractionDigits: 3,
 				MaxFractionDigits: 5,
 			},
@@ -299,13 +299,13 @@ func TestFloatDigits(t *testing.T) {
 func TestFloatFormat(t *testing.T) {
 	tests := []struct {
 		val      Float
-		nf       schema.NumberFormat
+		nf       lxn.NumberFormat
 		expected string
 	}{
 		{
 			val: Float(math.NaN()),
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Nan: "not-a-number",
 				},
 			},
@@ -313,8 +313,8 @@ func TestFloatFormat(t *testing.T) {
 		},
 		{
 			val: Float(math.Inf(+1)),
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Inf: "infinity",
 				},
 				PositivePrefix: "p_",
@@ -324,8 +324,8 @@ func TestFloatFormat(t *testing.T) {
 		},
 		{
 			val: Float(math.Inf(-1)),
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Inf: "infinity",
 				},
 				NegativePrefix: "np_",
@@ -335,8 +335,8 @@ func TestFloatFormat(t *testing.T) {
 		},
 		{
 			val: 0,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -349,8 +349,8 @@ func TestFloatFormat(t *testing.T) {
 		},
 		{
 			val: 123.12,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},
@@ -363,8 +363,8 @@ func TestFloatFormat(t *testing.T) {
 		},
 		{
 			val: -123.12,
-			nf: schema.NumberFormat{
-				Symbols: schema.Symbols{
+			nf: lxn.NumberFormat{
+				Symbols: lxn.Symbols{
 					Zero:    '0',
 					Decimal: ":",
 				},

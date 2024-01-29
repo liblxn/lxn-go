@@ -3,796 +3,796 @@ package lxn
 import (
 	"testing"
 
-	schema "github.com/liblxn/lxn/schema/golang"
+	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
 func TestPluralTag(t *testing.T) {
 	tests := map[string][]struct {
 		num      number
-		nf       schema.NumberFormat
-		plurals  []schema.Plural
-		expected schema.PluralTag
+		nf       lxn.NumberFormat
+		plurals  []lxn.Plural
+		expected lxn.PluralCategory
 	}{
 		"absolute values": {
 			{
 				num: Uint(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.AbsoluteValue,
-								Ranges:     []schema.Range{{LowerBound: 7, UpperBound: 7}},
-								Connective: schema.None,
+								Operand:    lxn.AbsoluteValue,
+								Ranges:     []lxn.Range{{LowerBound: 7, UpperBound: 7}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Few,
+				expected: lxn.Few,
 			},
 			{
 				num: Int(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.AbsoluteValue,
+								Operand:    lxn.AbsoluteValue,
 								Modulo:     5,
-								Ranges:     []schema.Range{{LowerBound: 2, UpperBound: 2}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 2, UpperBound: 2}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Few,
+				expected: lxn.Few,
 			},
 			{
 				num: Float(7.5),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.AbsoluteValue,
+								Operand:    lxn.AbsoluteValue,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 6, UpperBound: 8}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 6, UpperBound: 8}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Few,
+				expected: lxn.Few,
 			},
 		},
 
 		"integer digits": {
 			{
 				num: Float(7.5),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
-								Ranges:     []schema.Range{{LowerBound: 7, UpperBound: 7}},
-								Connective: schema.None,
+								Operand:    lxn.IntegerDigits,
+								Ranges:     []lxn.Range{{LowerBound: 7, UpperBound: 7}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(0.5),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Modulo:     10,
-								Ranges:     []schema.Range{{LowerBound: 0, UpperBound: 0}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 0, UpperBound: 0}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(75.25),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Modulo:     10,
-								Ranges:     []schema.Range{{LowerBound: 5, UpperBound: 5}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 5, UpperBound: 5}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 		},
 
 		"number of fraction digits with trailing zeros": {
 			{
 				num: Uint(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Two,
-						Rules: []schema.PluralRule{
+						Category: lxn.Two,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.NumFracDigits,
-								Ranges:     []schema.Range{{LowerBound: 0, UpperBound: 0}},
-								Connective: schema.None,
+								Operand:    lxn.NumFracDigits,
+								Ranges:     []lxn.Range{{LowerBound: 0, UpperBound: 0}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Two,
+				expected: lxn.Two,
 			},
 			{
 				num: Int(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 4,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Two,
-						Rules: []schema.PluralRule{
+						Category: lxn.Two,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.NumFracDigits,
-								Ranges:     []schema.Range{{LowerBound: 2, UpperBound: 2}},
-								Connective: schema.None,
+								Operand:    lxn.NumFracDigits,
+								Ranges:     []lxn.Range{{LowerBound: 2, UpperBound: 2}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Two,
+				expected: lxn.Two,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 6,
 					MaxFractionDigits: 6,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Two,
-						Rules: []schema.PluralRule{
+						Category: lxn.Two,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.NumFracDigits,
+								Operand:    lxn.NumFracDigits,
 								Modulo:     4,
-								Ranges:     []schema.Range{{LowerBound: 2, UpperBound: 2}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 2, UpperBound: 2}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Two,
+				expected: lxn.Two,
 			},
 		},
 
 		"number of fraction digits without trailing zeros": {
 			{
 				num: Int(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.One,
-						Rules: []schema.PluralRule{
+						Category: lxn.One,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.NumFracDigitsNoZeros,
-								Ranges:     []schema.Range{{LowerBound: 0, UpperBound: 0}},
-								Connective: schema.None,
+								Operand:    lxn.NumFracDigitsNoZeros,
+								Ranges:     []lxn.Range{{LowerBound: 0, UpperBound: 0}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.One,
+				expected: lxn.One,
 			},
 			{
 				num: Float(7.5),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.One,
-						Rules: []schema.PluralRule{
+						Category: lxn.One,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.NumFracDigitsNoZeros,
-								Ranges:     []schema.Range{{LowerBound: 1, UpperBound: 1}},
-								Connective: schema.None,
+								Operand:    lxn.NumFracDigitsNoZeros,
+								Ranges:     []lxn.Range{{LowerBound: 1, UpperBound: 1}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.One,
+				expected: lxn.One,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 6,
 					MaxFractionDigits: 6,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.One,
-						Rules: []schema.PluralRule{
+						Category: lxn.One,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.NumFracDigitsNoZeros,
+								Operand:    lxn.NumFracDigitsNoZeros,
 								Modulo:     4,
-								Ranges:     []schema.Range{{LowerBound: 2, UpperBound: 2}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 2, UpperBound: 2}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.One,
+				expected: lxn.One,
 			},
 		},
 
 		"fraction digits value with trailing zeros": {
 			{
 				num: Uint(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Zero,
-						Rules: []schema.PluralRule{
+						Category: lxn.Zero,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.FracDigits,
-								Ranges:     []schema.Range{{LowerBound: 0, UpperBound: 0}},
-								Connective: schema.None,
+								Operand:    lxn.FracDigits,
+								Ranges:     []lxn.Range{{LowerBound: 0, UpperBound: 0}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Zero,
+				expected: lxn.Zero,
 			},
 			{
 				num: Float(7.5),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Zero,
-						Rules: []schema.PluralRule{
+						Category: lxn.Zero,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.FracDigits,
-								Ranges:     []schema.Range{{LowerBound: 50, UpperBound: 50}},
-								Connective: schema.None,
+								Operand:    lxn.FracDigits,
+								Ranges:     []lxn.Range{{LowerBound: 50, UpperBound: 50}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Zero,
+				expected: lxn.Zero,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 6,
 					MaxFractionDigits: 6,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Zero,
-						Rules: []schema.PluralRule{
+						Category: lxn.Zero,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Modulo:     100,
-								Ranges:     []schema.Range{{LowerBound: 92, UpperBound: 92}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 92, UpperBound: 92}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Zero,
+				expected: lxn.Zero,
 			},
 		},
 
 		"fraction digits value without trailing zeros": {
 			{
 				num: Int(7),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Zero,
-						Rules: []schema.PluralRule{
+						Category: lxn.Zero,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.FracDigitsNoZeros,
-								Ranges:     []schema.Range{{LowerBound: 0, UpperBound: 0}},
-								Connective: schema.None,
+								Operand:    lxn.FracDigitsNoZeros,
+								Ranges:     []lxn.Range{{LowerBound: 0, UpperBound: 0}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Zero,
+				expected: lxn.Zero,
 			},
 			{
 				num: Float(7.5),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Zero,
-						Rules: []schema.PluralRule{
+						Category: lxn.Zero,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.FracDigitsNoZeros,
-								Ranges:     []schema.Range{{LowerBound: 5, UpperBound: 5}},
-								Connective: schema.None,
+								Operand:    lxn.FracDigitsNoZeros,
+								Ranges:     []lxn.Range{{LowerBound: 5, UpperBound: 5}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Zero,
+				expected: lxn.Zero,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 8,
 					MaxFractionDigits: 8,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Zero,
-						Rules: []schema.PluralRule{
+						Category: lxn.Zero,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.FracDigitsNoZeros,
+								Operand:    lxn.FracDigitsNoZeros,
 								Modulo:     100,
-								Ranges:     []schema.Range{{LowerBound: 92, UpperBound: 92}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 92, UpperBound: 92}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Zero,
+				expected: lxn.Zero,
 			},
 		},
 
 		"conjunction": {
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Few,
+				expected: lxn.Few,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Other,
+				expected: lxn.Other,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Other,
+				expected: lxn.Other,
 			},
 		},
 
 		"disjunction": {
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Few,
+				expected: lxn.Few,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Few,
+				expected: lxn.Few,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Other,
+				expected: lxn.Other,
 			},
 		},
 
 		"conjunction and disjunction": {
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Many,
+				expected: lxn.Many,
 			},
 			{
 				num: Float(3.141592),
-				nf: schema.NumberFormat{
+				nf: lxn.NumberFormat{
 					MinFractionDigits: 2,
 					MaxFractionDigits: 2,
 				},
-				plurals: []schema.Plural{
+				plurals: []lxn.Plural{
 					{
-						Tag: schema.Many,
-						Rules: []schema.PluralRule{
+						Category: lxn.Many,
+						Rules: []lxn.PluralRule{
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.Disjunction,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.Disjunction,
 							},
 							{
-								Operand:    schema.IntegerDigits,
+								Operand:    lxn.IntegerDigits,
 								Negate:     true,
-								Ranges:     []schema.Range{{LowerBound: 3, UpperBound: 3}},
-								Connective: schema.Conjunction,
+								Ranges:     []lxn.Range{{LowerBound: 3, UpperBound: 3}},
+								Connective: lxn.Conjunction,
 							},
 							{
-								Operand:    schema.FracDigits,
+								Operand:    lxn.FracDigits,
 								Negate:     false,
-								Ranges:     []schema.Range{{LowerBound: 14, UpperBound: 14}},
-								Connective: schema.None,
+								Ranges:     []lxn.Range{{LowerBound: 14, UpperBound: 14}},
+								Connective: lxn.None,
 							},
 						},
 					},
 				},
-				expected: schema.Other,
+				expected: lxn.Other,
 			},
 		},
 	}

@@ -5,8 +5,8 @@ import (
 	"math"
 	"os"
 
-	schema "github.com/liblxn/lxn/schema/golang"
-	msgpack "github.com/mprot/msgpack-go"
+	"github.com/liblxn/lxn-go/internal/lxn"
+	"github.com/mprot/msgpack-go"
 )
 
 const noCurrency = string(currencyPlaceholder)
@@ -18,12 +18,12 @@ type Translator func(key string, ctx Context) string
 // ReadCatalog reads a catalog from the given binary stream and returns
 // the corresponding translation function.
 func ReadCatalog(r io.Reader) (Translator, error) {
-	var cat schema.Catalog
+	var cat lxn.Catalog
 	if err := msgpack.Decode(r, &cat); err != nil {
 		return nil, err
 	}
 
-	msgs := make(map[string]schema.Message, len(cat.Messages)) // key => message
+	msgs := make(map[string]lxn.Message, len(cat.Messages)) // key => message
 	for _, m := range cat.Messages {
 		key := m.Key
 		if m.Section != "" {
@@ -54,7 +54,7 @@ func ReadCatalogFile(filename string) (Translator, error) {
 	return ReadCatalog(f)
 }
 
-func formatMsg(w *writer, m *schema.Message, ctx Context, loc *schema.Locale) {
+func formatMsg(w *writer, m *lxn.Message, ctx Context, loc *lxn.Locale) {
 	off := 0
 	for i, t := range m.Text {
 		for off < len(m.Replacements) && m.Replacements[off].TextPos <= i {
@@ -68,7 +68,7 @@ func formatMsg(w *writer, m *schema.Message, ctx Context, loc *schema.Locale) {
 	}
 }
 
-func replace(w *writer, r *schema.Replacement, ctx Context, loc *schema.Locale) {
+func replace(w *writer, r *lxn.Replacement, ctx Context, loc *lxn.Locale) {
 	v, has := ctx[r.Key]
 	if !has {
 		w.MissingVar(r.Key)
@@ -76,17 +76,17 @@ func replace(w *writer, r *schema.Replacement, ctx Context, loc *schema.Locale) 
 	}
 
 	switch r.Type {
-	case schema.StringReplacement:
+	case lxn.StringReplacement:
 		w.WriteString(v.String())
 
-	case schema.NumberReplacement:
+	case lxn.NumberReplacement:
 		replaceNumber(w, v, r.Key, &loc.DecimalFormat, noCurrency)
 
-	case schema.PercentReplacement:
+	case lxn.PercentReplacement:
 		replaceNumber(w, v, r.Key, &loc.PercentFormat, noCurrency)
 
-	case schema.MoneyReplacement:
-		details, ok := r.Details.Value.(schema.MoneyDetails)
+	case lxn.MoneyReplacement:
+		details, ok := r.Details.Value.(lxn.MoneyDetails)
 		if !ok {
 			w.Corrupted(r.Key)
 		} else if curr, has := ctx[details.Currency]; has {
@@ -95,16 +95,16 @@ func replace(w *writer, r *schema.Replacement, ctx Context, loc *schema.Locale) 
 			w.MissingVar(details.Currency)
 		}
 
-	case schema.PluralReplacement:
-		details, ok := r.Details.Value.(schema.PluralDetails)
+	case lxn.PluralReplacement:
+		details, ok := r.Details.Value.(lxn.PluralDetails)
 		if !ok {
 			w.Corrupted(r.Key)
 		} else {
 			replacePlural(w, v, ctx, &details, loc)
 		}
 
-	case schema.SelectReplacement:
-		details, ok := r.Details.Value.(schema.SelectDetails)
+	case lxn.SelectReplacement:
+		details, ok := r.Details.Value.(lxn.SelectDetails)
 		if !ok {
 			w.Corrupted(r.Key)
 		} else {
@@ -116,7 +116,7 @@ func replace(w *writer, r *schema.Replacement, ctx Context, loc *schema.Locale) 
 	}
 }
 
-func replaceNumber(w *writer, v Variable, key string, nf *schema.NumberFormat, currency string) {
+func replaceNumber(w *writer, v Variable, key string, nf *lxn.NumberFormat, currency string) {
 	if num, isNum := v.(number); isNum {
 		num.format(w, nf, currency)
 	} else {
@@ -124,8 +124,8 @@ func replaceNumber(w *writer, v Variable, key string, nf *schema.NumberFormat, c
 	}
 }
 
-func replacePlural(w *writer, v Variable, ctx Context, details *schema.PluralDetails, loc *schema.Locale) {
-	tag := schema.Other
+func replacePlural(w *writer, v Variable, ctx Context, details *lxn.PluralDetails, loc *lxn.Locale) {
+	tag := lxn.Other
 	if num, isNum := v.(number); isNum {
 		if i, ok := intval(num); ok {
 			if msg, has := details.Custom[i]; has {
@@ -134,7 +134,7 @@ func replacePlural(w *writer, v Variable, ctx Context, details *schema.PluralDet
 			}
 		}
 		plurals := loc.CardinalPlurals
-		if details.Type == schema.Ordinal {
+		if details.Type == lxn.Ordinal {
 			plurals = loc.OrdinalPlurals
 		}
 		tag = pluralTag(num, &loc.DecimalFormat, plurals)
@@ -142,14 +142,14 @@ func replacePlural(w *writer, v Variable, ctx Context, details *schema.PluralDet
 
 	msg, has := details.Variants[tag]
 	if !has {
-		if msg, has = details.Variants[schema.Other]; !has {
+		if msg, has = details.Variants[lxn.Other]; !has {
 			return
 		}
 	}
 	formatMsg(w, &msg, ctx, loc)
 }
 
-func replaceSelect(w *writer, v Variable, ctx Context, details *schema.SelectDetails, loc *schema.Locale) {
+func replaceSelect(w *writer, v Variable, ctx Context, details *lxn.SelectDetails, loc *lxn.Locale) {
 	msg, has := details.Cases[v.String()]
 	if !has {
 		if msg, has = details.Cases[details.Fallback]; !has {

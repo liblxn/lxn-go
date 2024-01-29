@@ -3,25 +3,25 @@ package lxn
 import (
 	"testing"
 
-	schema "github.com/liblxn/lxn/schema/golang"
+	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
 func TestFormatMsg(t *testing.T) {
 	tests := []struct {
-		msg      schema.Message
+		msg      lxn.Message
 		ctx      Context
-		loc      schema.Locale
+		loc      lxn.Locale
 		expected string
 	}{
 		// no replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foobar"},
 			},
 			expected: "foobar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo", "bar"},
 			},
 			expected: "foobar",
@@ -29,13 +29,13 @@ func TestFormatMsg(t *testing.T) {
 
 		// string replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -47,19 +47,19 @@ func TestFormatMsg(t *testing.T) {
 
 		// number replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.NumberReplacement,
+						Type:    lxn.NumberReplacement,
 					},
 				},
 			},
-			loc: schema.Locale{
-				DecimalFormat: schema.NumberFormat{
-					Symbols: schema.Symbols{Zero: '0'},
+			loc: lxn.Locale{
+				DecimalFormat: lxn.NumberFormat{
+					Symbols: lxn.Symbols{Zero: '0'},
 				},
 			},
 			ctx: Context{
@@ -70,19 +70,19 @@ func TestFormatMsg(t *testing.T) {
 
 		// percent replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PercentReplacement,
+						Type:    lxn.PercentReplacement,
 					},
 				},
 			},
-			loc: schema.Locale{
-				PercentFormat: schema.NumberFormat{
-					Symbols:        schema.Symbols{Zero: '0', Percent: "%"},
+			loc: lxn.Locale{
+				PercentFormat: lxn.NumberFormat{
+					Symbols:        lxn.Symbols{Zero: '0', Percent: "%"},
 					PositiveSuffix: "%",
 				},
 			},
@@ -94,22 +94,22 @@ func TestFormatMsg(t *testing.T) {
 
 		// money replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.MoneyReplacement,
-						Details: schema.ReplacementDetails{
-							schema.MoneyDetails{Currency: "currkey"},
+						Type:    lxn.MoneyReplacement,
+						Details: lxn.ReplacementDetails{
+							lxn.MoneyDetails{Currency: "currkey"},
 						},
 					},
 				},
 			},
-			loc: schema.Locale{
-				MoneyFormat: schema.NumberFormat{
-					Symbols:        schema.Symbols{Zero: '0'},
+			loc: lxn.Locale{
+				MoneyFormat: lxn.NumberFormat{
+					Symbols:        lxn.Symbols{Zero: '0'},
 					PositiveSuffix: string(currencyPlaceholder),
 				},
 			},
@@ -122,18 +122,18 @@ func TestFormatMsg(t *testing.T) {
 
 		// plural replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PluralReplacement,
-						Details: schema.ReplacementDetails{
-							schema.PluralDetails{
-								Type: schema.Cardinal,
-								Variants: map[schema.PluralTag]schema.Message{
-									schema.Other: {
+						Type:    lxn.PluralReplacement,
+						Details: lxn.ReplacementDetails{
+							Value: lxn.PluralDetails{
+								Type: lxn.Cardinal,
+								Variants: map[lxn.PluralCategory]lxn.Message{
+									lxn.Other: {
 										Text: []string{"plural"},
 									},
 								},
@@ -148,18 +148,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PluralReplacement,
-						Details: schema.ReplacementDetails{
-							schema.PluralDetails{
-								Type: schema.Cardinal,
-								Variants: map[schema.PluralTag]schema.Message{
-									schema.Few: {
+						Type:    lxn.PluralReplacement,
+						Details: lxn.ReplacementDetails{
+							Value: lxn.PluralDetails{
+								Type: lxn.Cardinal,
+								Variants: map[lxn.PluralCategory]lxn.Message{
+									lxn.Few: {
 										Text: []string{"plural"},
 									},
 								},
@@ -168,14 +168,14 @@ func TestFormatMsg(t *testing.T) {
 					},
 				},
 			},
-			loc: schema.Locale{
-				CardinalPlurals: []schema.Plural{
+			loc: lxn.Locale{
+				CardinalPlurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand: schema.AbsoluteValue,
-								Ranges:  []schema.Range{{LowerBound: 7, UpperBound: 7}},
+								Operand: lxn.AbsoluteValue,
+								Ranges:  []lxn.Range{{LowerBound: 7, UpperBound: 7}},
 							},
 						},
 					},
@@ -187,18 +187,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PluralReplacement,
-						Details: schema.ReplacementDetails{
-							schema.PluralDetails{
-								Type: schema.Ordinal,
-								Variants: map[schema.PluralTag]schema.Message{
-									schema.Few: {
+						Type:    lxn.PluralReplacement,
+						Details: lxn.ReplacementDetails{
+							Value: lxn.PluralDetails{
+								Type: lxn.Ordinal,
+								Variants: map[lxn.PluralCategory]lxn.Message{
+									lxn.Few: {
 										Text: []string{"plural"},
 									},
 								},
@@ -207,14 +207,14 @@ func TestFormatMsg(t *testing.T) {
 					},
 				},
 			},
-			loc: schema.Locale{
-				OrdinalPlurals: []schema.Plural{
+			loc: lxn.Locale{
+				OrdinalPlurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand: schema.AbsoluteValue,
-								Ranges:  []schema.Range{{LowerBound: 7, UpperBound: 7}},
+								Operand: lxn.AbsoluteValue,
+								Ranges:  []lxn.Range{{LowerBound: 7, UpperBound: 7}},
 							},
 						},
 					},
@@ -226,18 +226,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PluralReplacement,
-						Details: schema.ReplacementDetails{
-							schema.PluralDetails{
-								Type: schema.Ordinal,
-								Variants: map[schema.PluralTag]schema.Message{
-									schema.Other: {
+						Type:    lxn.PluralReplacement,
+						Details: lxn.ReplacementDetails{
+							Value: lxn.PluralDetails{
+								Type: lxn.Ordinal,
+								Variants: map[lxn.PluralCategory]lxn.Message{
+									lxn.Other: {
 										Text: []string{"plural"},
 									},
 								},
@@ -246,14 +246,14 @@ func TestFormatMsg(t *testing.T) {
 					},
 				},
 			},
-			loc: schema.Locale{
-				OrdinalPlurals: []schema.Plural{
+			loc: lxn.Locale{
+				OrdinalPlurals: []lxn.Plural{
 					{
-						Tag: schema.Few,
-						Rules: []schema.PluralRule{
+						Category: lxn.Few,
+						Rules: []lxn.PluralRule{
 							{
-								Operand: schema.AbsoluteValue,
-								Ranges:  []schema.Range{{LowerBound: 7, UpperBound: 7}},
+								Operand: lxn.AbsoluteValue,
+								Ranges:  []lxn.Range{{LowerBound: 7, UpperBound: 7}},
 							},
 						},
 					},
@@ -265,17 +265,17 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo plural bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PluralReplacement,
-						Details: schema.ReplacementDetails{
-							schema.PluralDetails{
-								Type: schema.Ordinal,
-								Custom: map[int64]schema.Message{
+						Type:    lxn.PluralReplacement,
+						Details: lxn.ReplacementDetails{
+							Value: lxn.PluralDetails{
+								Type: lxn.Ordinal,
+								Custom: map[int64]lxn.Message{
 									7: {
 										Text: []string{"plural"},
 									},
@@ -293,16 +293,16 @@ func TestFormatMsg(t *testing.T) {
 
 		// select replacement
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.SelectReplacement,
-						Details: schema.ReplacementDetails{
-							schema.SelectDetails{
-								Cases: map[string]schema.Message{
+						Type:    lxn.SelectReplacement,
+						Details: lxn.ReplacementDetails{
+							Value: lxn.SelectDetails{
+								Cases: map[string]lxn.Message{
 									"abc": {
 										Text: []string{"select"},
 									},
@@ -318,16 +318,16 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo select bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.SelectReplacement,
-						Details: schema.ReplacementDetails{
-							schema.SelectDetails{
-								Cases: map[string]schema.Message{
+						Type:    lxn.SelectReplacement,
+						Details: lxn.ReplacementDetails{
+							lxn.SelectDetails{
+								Cases: map[string]lxn.Message{
 									"abc": {
 										Text: []string{"select"},
 									},
@@ -346,13 +346,13 @@ func TestFormatMsg(t *testing.T) {
 
 		// replacement positioning
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 0,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -362,13 +362,13 @@ func TestFormatMsg(t *testing.T) {
 			expected: "abcfoo  bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 2,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -378,18 +378,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo  barabc",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 0,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 0,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -400,18 +400,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "abcdeffoo  bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 1,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 1,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -422,18 +422,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo abcdef bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 2,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 2,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -444,18 +444,18 @@ func TestFormatMsg(t *testing.T) {
 			expected: "foo  barabcdef",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey1",
 						TextPos: 0,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 					{
 						Key:     "replkey2",
 						TextPos: 2,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -478,20 +478,20 @@ func TestFormatMsg(t *testing.T) {
 
 func TestFormatMsgWithIncompleteInput(t *testing.T) {
 	tests := []struct {
-		msg      schema.Message
+		msg      lxn.Message
 		ctx      Context
-		loc      schema.Locale
+		loc      lxn.Locale
 		expected string
 	}{
 		// missing variable
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.StringReplacement,
+						Type:    lxn.StringReplacement,
 					},
 				},
 			},
@@ -500,15 +500,15 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// missing currency variable
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.MoneyReplacement,
-						Details: schema.ReplacementDetails{
-							schema.MoneyDetails{Currency: "currkey"},
+						Type:    lxn.MoneyReplacement,
+						Details: lxn.ReplacementDetails{
+							lxn.MoneyDetails{Currency: "currkey"},
 						},
 					},
 				},
@@ -521,13 +521,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// unsupported replacement type
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.ReplacementType(99),
+						Type:    lxn.ReplacementType(99),
 					},
 				},
 			},
@@ -539,13 +539,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// invalid number type
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.NumberReplacement,
+						Type:    lxn.NumberReplacement,
 					},
 				},
 			},
@@ -557,13 +557,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 
 		// corrupted details
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.MoneyReplacement,
+						Type:    lxn.MoneyReplacement,
 					},
 				},
 			},
@@ -573,13 +573,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 			expected: "foo %!(CORRUPTED:replkey) bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.PluralReplacement,
+						Type:    lxn.PluralReplacement,
 					},
 				},
 			},
@@ -589,13 +589,13 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 			expected: "foo %!(CORRUPTED:replkey) bar",
 		},
 		{
-			msg: schema.Message{
+			msg: lxn.Message{
 				Text: []string{"foo ", " bar"},
-				Replacements: []schema.Replacement{
+				Replacements: []lxn.Replacement{
 					{
 						Key:     "replkey",
 						TextPos: 1,
-						Type:    schema.SelectReplacement,
+						Type:    lxn.SelectReplacement,
 					},
 				},
 			},
