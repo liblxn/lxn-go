@@ -6,7 +6,7 @@ import (
 	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
-func TestFormatMsg(t *testing.T) {
+func TestMessageFormat(t *testing.T) {
 	tests := []struct {
 		msg      lxn.Message
 		ctx      Context
@@ -102,7 +102,7 @@ func TestFormatMsg(t *testing.T) {
 						TextPos: 1,
 						Type:    lxn.MoneyReplacement,
 						Details: lxn.ReplacementDetails{
-							lxn.MoneyDetails{Currency: "currkey"},
+							Value: lxn.MoneyDetails{Currency: "currkey"},
 						},
 					},
 				},
@@ -326,7 +326,7 @@ func TestFormatMsg(t *testing.T) {
 						TextPos: 1,
 						Type:    lxn.SelectReplacement,
 						Details: lxn.ReplacementDetails{
-							lxn.SelectDetails{
+							Value: lxn.SelectDetails{
 								Cases: map[string]lxn.Message{
 									"abc": {
 										Text: []string{"select"},
@@ -468,15 +468,15 @@ func TestFormatMsg(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var w writer
-		formatMsg(&w, &test.msg, test.ctx, &test.loc)
-		if s := w.String(); s != test.expected {
-			t.Errorf("unexpected message format for %q: %q", test.expected, s)
+		msg := newMessage(test.msg)
+		got := msg.Format(newLocale(test.loc), test.ctx)
+		if got != test.expected {
+			t.Errorf("unexpected message format for %q: %q", test.expected, got)
 		}
 	}
 }
 
-func TestFormatMsgWithIncompleteInput(t *testing.T) {
+func TestMessageFormatWithIncompleteInput(t *testing.T) {
 	tests := []struct {
 		msg      lxn.Message
 		ctx      Context
@@ -508,7 +508,7 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 						TextPos: 1,
 						Type:    lxn.MoneyReplacement,
 						Details: lxn.ReplacementDetails{
-							lxn.MoneyDetails{Currency: "currkey"},
+							Value: lxn.MoneyDetails{Currency: "currkey"},
 						},
 					},
 				},
@@ -607,10 +607,10 @@ func TestFormatMsgWithIncompleteInput(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var w writer
-		formatMsg(&w, &test.msg, test.ctx, &test.loc)
-		if s := w.String(); s != test.expected {
-			t.Errorf("unexpected message format for %q: %q", test.expected, s)
+		msg := newMessage(test.msg)
+		got := msg.Format(newLocale(test.loc), test.ctx)
+		if got != test.expected {
+			t.Errorf("unexpected message format for %q: %q", test.expected, got)
 		}
 	}
 }

@@ -1,57 +1,33 @@
 package lxn
 
 import (
-	"io"
 	"math"
-	"os"
 
 	"github.com/liblxn/lxn-go/internal/lxn"
-	"github.com/mprot/msgpack-go"
 )
 
 const noCurrency = string(currencyPlaceholder)
 
-// Translator represents the function type for translating messages with
-// the given context.
-type Translator func(key string, ctx Context) string
-
-// ReadCatalog reads a catalog from the given binary stream and returns
-// the corresponding translation function.
-func ReadCatalog(r io.Reader) (Translator, error) {
-	var cat lxn.Catalog
-	if err := msgpack.Decode(r, &cat); err != nil {
-		return nil, err
-	}
-
-	msgs := make(map[string]lxn.Message, len(cat.Messages)) // key => message
-	for _, m := range cat.Messages {
-		key := m.Key
-		if m.Section != "" {
-			key = m.Section + "." + key
-		}
-		msgs[key] = m
-	}
-
-	return func(key string, ctx Context) string {
-		m, has := msgs[key]
-		if !has {
-			return ""
-		}
-
-		var w writer
-		formatMsg(&w, &m, ctx, &cat.Locale)
-		return w.String()
-	}, nil
+type Message struct {
+	msg lxn.Message
 }
 
-func ReadCatalogFile(filename string) (Translator, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
+func newMessage(m lxn.Message) *Message {
+	return &Message{msg: m}
+}
 
-	return ReadCatalog(f)
+func (m *Message) Section() string {
+	return m.msg.Section
+}
+
+func (m *Message) Key() string {
+	return m.msg.Key
+}
+
+func (m *Message) Format(loc *Locale, ctx Context) string {
+	var w writer
+	formatMsg(&w, &m.msg, ctx, &loc.loc)
+	return w.String()
 }
 
 func formatMsg(w *writer, m *lxn.Message, ctx Context, loc *lxn.Locale) {

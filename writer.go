@@ -1,8 +1,8 @@
 package lxn
 
 import (
-	"bytes"
 	"strconv"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/liblxn/lxn-go/internal/lxn"
@@ -15,7 +15,7 @@ const (
 )
 
 type writer struct {
-	bytes.Buffer
+	strings.Builder
 }
 
 func (w *writer) WriteRunes(runes []rune) {
