@@ -25,6 +25,10 @@ func ReadDictionary(r io.Reader) (*Dictionary, error) {
 	}, nil
 }
 
+func (d *Dictionary) Locale() *Locale {
+	return d.loc
+}
+
 func (d *Dictionary) Translate(section string, messageKey string, ctx Context) string {
 	msg := d.cat.Message(section, messageKey)
 	if msg == nil {
