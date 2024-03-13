@@ -8,6 +8,10 @@ import (
 	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
+// Dictionary is a container that holds messages for a locale and the
+// locale data necessary to format these messages. Each message is
+// identified by a unique key which consists of the section and the
+// message key within the lxn file.
 type Dictionary struct {
 	loc *Locale
 	cat *Catalog

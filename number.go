@@ -8,9 +8,16 @@ import (
 )
 
 type number interface {
+	Variable
 	digits(buf []rune, nf *lxn.NumberFormat, zero rune) ([]rune, []rune) // (integer, fraction)
 	format(w *writer, nf *lxn.NumberFormat, currency string)
 }
+
+var (
+	_ number = Int(0)
+	_ number = Uint(0)
+	_ number = Float(0)
+)
 
 const (
 	maxIntDigits   = 32 + 32 // integer + fraction digits

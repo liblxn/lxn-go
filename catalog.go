@@ -9,6 +9,9 @@ import (
 	"github.com/liblxn/lxn-go/internal/lxn"
 )
 
+// Catalog is a container that holds messages for a locale. The locale itself
+// is referenced by its id only. Each message is identified by a unique key
+// which consists of the section and the message key within the lxn file.
 type Catalog struct {
 	localeID string
 	msgs     map[string]*Message // message's unique key => message
@@ -40,17 +43,20 @@ func newCatalog(localeID string, messages []lxn.Message) *Catalog {
 // catalogs must have the same locale id. If there are duplicates
 // in the message key, they will be overwritten.
 //
-// Note: This function panics if no catalogs are specified.
+// Note: If no catalog is passed as an argument, nil will be returned.
 func MergeCatalogs(catalogs ...*Catalog) (*Catalog, error) {
-	if len(catalogs) == 0 {
-		panic("no catalogs to merge")
+	switch len(catalogs) {
+	case 0:
+		return nil, nil
+	case 1:
+		return catalogs[0], nil
 	}
 
 	localeID := catalogs[0].localeID
 	msgs := map[string]*Message{}
 	for _, cat := range catalogs {
 		if localeID != cat.localeID {
-			return nil, fmt.Errorf("multiple locale ids detected: %s and %s", localeID, cat.localeID)
+			return nil, fmt.Errorf("multiple locales detected: %s and %s", localeID, cat.localeID)
 		}
 		for key, msg := range cat.msgs {
 			msgs[key] = msg
